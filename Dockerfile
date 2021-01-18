@@ -24,8 +24,8 @@ RUN \
     && usermod -d /var/lib/redis redis \
     && apt -o Acquire::GzipIndexes=false update \
     # add nginx repo
-    && apt update -y \
-    && apt install -y gnupg2 nginx wget curl \ 
+    && apt update \
+    && apt install gnupg2 nginx wget curl -y \ 
     && wget http://repo.ajenti.org/debian/key -O- | apt-key add - \
     && echo "deb http://repo.ajenti.org/debian main main ubuntu" > /etc/apt/sources.list.d/ajenti.list \
     && apt update && apt upgrade -y \
