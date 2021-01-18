@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN \
     cd /tmp \
     # add our user and group first to make sure their IDs get assigned consistently
-    && echo "nginx mysql bind clamav ssl-cert dovecot dovenull Debian-exim postgres debian-spamd epmd couchdb memcache mongodb redis" | xargs -n1 groupadd -K GID_MIN=100 -K GID_MAX=999 ${g} \
+    && echo "nginx mysql bind clamav ssl-cert dovecot dovenull Debian-exim postgres debian-spamd epmd memcache redis" | xargs -n1 groupadd -K GID_MIN=100 -K GID_MAX=999 ${g} \
     && echo "nginx nginx mysql mysql bind bind clamav clamav dovecot dovecot dovenull dovenull Debian-exim Debian-exim postgres postgres debian-spamd debian-spamd epmd epmd couchdb couchdb memcache memcache mongodb mongodb redis redis" | xargs -n2 useradd -d /nonexistent -s /bin/false -K UID_MIN=100 -K UID_MAX=999 -g ${g} \
     && usermod -d /var/lib/mysql mysql \
     && usermod -d /var/cache/bind bind \
@@ -19,8 +19,6 @@ RUN \
     && usermod -d /var/lib/postgresql -s /bin/bash -a -G ssl-cert postgres \
     && usermod -d /var/lib/spamassassin -s /bin/sh -a -G mail debian-spamd \
     && usermod -d /var/run/epmd epmd \
-    && usermod -d /var/lib/couchdb -s /bin/bash couchdb \
-    && usermod -d /var/lib/mongodb -a -G nogroup mongodb \
     && usermod -d /var/lib/redis redis \
     && apt -o Acquire::GzipIndexes=false update \
     # add nginx repo
@@ -37,20 +35,14 @@ RUN \
     && apt install -y --no-install-recommends libpcre3-dev libssl-dev dpkg-dev libgd-dev \
     # put nginx on hold so it doesn't get updates with apt upgrade
     # install other things
-    && apt install -yf mongodb-org php-mongodb couchdb nodejs memcached php-memcached redis-server openvpn \
+    && apt install -yf nodejs memcached php-memcached redis-server openvpn \
     postgresql postgresql-contrib easy-rsa bind9 bind9utils bind9-doc \
     # relink nodejs
     && ln -sf "$(which nodejs)" /usr/bin/node \
-    # setting up dotnet, awscli, golang
-    # dotnet
-    && curl -SL $DOTNET_DOWNLOAD_URL -o /tmp/dotnet.tar.gz \
-    && mkdir -p /usr/share/dotnet \
-    && tar -zxf /tmp/dotnet.tar.gz -C /usr/share/dotnet \
-    && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet \
     # awscli
     && curl -O https://bootstrap.pypa.io/get-pip.py \
     && python get-pip.py \
-    && pip install awscli gevent gevent-socketio reconfigure requests pillow python-catcher python-exconsole urllib3 mako ajenti \
+    && pip install gevent gevent-socketio reconfigure requests pillow python-catcher python-exconsole urllib3 mako ajenti \
     # getting golang
     && cd /tmp \
     && curl -SL https://storage.googleapis.com/golang/go$GOLANG_VERSION.linux-amd64.tar.gz -o /tmp/golang.tar.gz \
