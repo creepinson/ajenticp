@@ -10,7 +10,7 @@ RUN \
     cd /tmp \
     # add our user and group first to make sure their IDs get assigned consistently
     && echo "nginx mysql bind clamav ssl-cert dovecot dovenull Debian-exim postgres debian-spamd epmd memcache redis" | xargs -n1 groupadd -K GID_MIN=100 -K GID_MAX=999 ${g} \
-    && echo "nginx nginx mysql mysql bind bind clamav clamav dovecot dovecot dovenull dovenull Debian-exim Debian-exim postgres postgres debian-spamd debian-spamd epmd epmd memcache memcache mongodb mongodb redis redis" | xargs -n2 useradd -d /nonexistent -s /bin/false -K UID_MIN=100 -K UID_MAX=999 -g ${g} \
+    && echo "nginx nginx mysql mysql bind bind clamav clamav dovecot dovecot dovenull dovenull Debian-exim Debian-exim postgres postgres debian-spamd debian-spamd epmd epmd memcache memcache redis redis" | xargs -n2 useradd -d /nonexistent -s /bin/false -K UID_MIN=100 -K UID_MAX=999 -g ${g} \
     && usermod -d /var/lib/mysql mysql \
     && usermod -d /var/cache/bind bind \
     && usermod -d /var/lib/clamav -a -G Debian-exim clamav && usermod -a -G mail clamav \
