@@ -37,8 +37,6 @@ RUN \
     # install other things
     && apt install -yf nodejs memcached php-memcached redis-server openvpn \
     postgresql postgresql-contrib easy-rsa bind9 bind9utils bind9-doc \
-    # relink nodejs
-    && ln -sf "$(which nodejs)" /usr/bin/node \
     # awscli
     && curl -O https://bootstrap.pypa.io/get-pip.py \
     && python get-pip.py \
