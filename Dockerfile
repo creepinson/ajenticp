@@ -52,27 +52,7 @@ RUN \
     && apt install -yq php-fpm php-mbstring php-cgi php-cli php-dev php-geoip php-common php-xmlrpc \
     php-dev php-curl php-enchant php-imap php-xsl php-mysql php-mysqlnd php-pspell php-gd \
     php-tidy php-opcache php-json php-bz2 php-pgsql php-readline php-sybase \
-    php-intl php-sqlite3 php-ldap php-xml php-redis php-imagick php-zip \
-    # patch before adding new files
-    && rm -f /var/lib/ajenti/plugins/vh-nginx/ng*.* \
-    && rm -f /var/lib/ajenti/plugins/vh-nginx/*.pyc \
-    && rm -f /var/lib/ajenti/plugins/vh-php-fpm/php*.* \
-    && rm -f /var/lib/ajenti/plugins/vh-php-fpm/*.pyc \
-    && rm -f /var/lib/ajenti/plugins/vh-php-fpm/php*.* \
-    && rm -f /var/lib/ajenti/plugins/vh-php-fpm/*.pyc \
-    && rm -f /var/lib/ajenti/plugins/vh/main.* \
-    && rm -f /var/lib/ajenti/plugins/vh/*.pyc \
-    && rm -f /var/lib/ajenti/plugins/vh/api.pyc \
-    && rm -f /var/lib/ajenti/plugins/vh/processes.pyc \
-    && mkdir -p /var/lib/ajenti/plugins/vh-php7.1-fpm \
-    # finish cleaning up
-    && dpkg --configure -a \
-    && rm -rf /usr/src/nginx \
-    && rm -rf /tmp/.spam* \
-    && rm -rf /tmp/* \
-    && apt -yf autoremove \
-    && apt clean 
-
+    php-intl php-sqlite3 php-ldap php-xml php-redis php-imagick php-zip
 # add files
 COPY rootfs/. /
 
