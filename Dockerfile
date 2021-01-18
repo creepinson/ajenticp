@@ -30,16 +30,12 @@ RUN \
     && wget http://repo.ajenti.org/debian/key -O- | apt-key add - \
     && echo "deb http://repo.ajenti.org/debian main main ubuntu" > /etc/apt/sources.list.d/ajenti.list \
     && apt update && apt upgrade -y \
-    && apt install -y nginx mariadb-server mariadb-client redis-server fail2ban nginx \
+    && apt install -y nginx mariadb-server mariadb-client redis-server fail2ban nginx python-pip python-dev libsasl2-dev python-dev libldap2-dev libssl-dev \
     && dpkg --configure -a \
     # update
     && apt update && apt -y --no-install-recommends upgrade \
     && apt install -y --no-install-recommends libpcre3-dev libssl-dev dpkg-dev libgd-dev \
     # put nginx on hold so it doesn't get updates with apt upgrade
-    && echo "nginx hold" | dpkg --set-selections \
-    && apt install -yq ajenti php-all-dev pkg-php-tools \
-    && apt install -yq ajenti-v ajenti-v-nginx ajenti-v-mysql ajenti-v-php-fpm \
-    ajenti-v-php7.4-fpm ajenti-v-mail ajenti-v-nodejs ajenti-v-python-gunicorn ajenti-v-ruby-unicorn \
     # install other things
     && apt install -yf mongodb-org php-mongodb couchdb nodejs memcached php-memcached redis-server openvpn \
     postgresql postgresql-contrib easy-rsa bind9 bind9utils bind9-doc \
@@ -54,7 +50,7 @@ RUN \
     # awscli
     && curl -O https://bootstrap.pypa.io/get-pip.py \
     && python get-pip.py \
-    && pip install awscli \
+    && pip install awscli gevent gevent-socketio reconfigure requests pillow python-catcher python-exconsole urllib3 mako ajenti \
     # getting golang
     && cd /tmp \
     && curl -SL https://storage.googleapis.com/golang/go$GOLANG_VERSION.linux-amd64.tar.gz -o /tmp/golang.tar.gz \
