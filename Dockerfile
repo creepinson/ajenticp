@@ -3,8 +3,6 @@ FROM ubuntu
 ENV DEBIAN_FRONTEND=noninteractive \
     GOLANG_VERSION=1.13 \
     DOTNET_DOWNLOAD_URL=https://download.microsoft.com/download/D/7/A/D7A9E4E9-5D25-4F0C-B071-210CB8267943/dotnet-ubuntu.16.04-x64.1.1.2.tar.gz  \
-    NGINX_BUILD_DIR=/usr/src/nginx \
-    NGINX_VERSION=1.19.6 \
     IMAGE_FILTER_URL=https://raw.githubusercontent.com/niiknow/docker-nginx-image-proxy/master/build/src/ngx_http_image_filter_module.c
 
 # start
@@ -24,28 +22,30 @@ RUN \
     && usermod -d /var/lib/couchdb -s /bin/bash couchdb \
     && usermod -d /var/lib/mongodb -a -G nogroup mongodb \
     && usermod -d /var/lib/redis redis \
-    && apt-get -o Acquire::GzipIndexes=false update \
+    && apt -o Acquire::GzipIndexes=false update \
     # add nginx repo
+    && apt update \
+    && apt install nginx wget curl \ 
     && wget http://repo.ajenti.org/debian/key -O- | apt-key add - \
     && echo "deb http://repo.ajenti.org/debian main main ubuntu" > /etc/apt/sources.list.d/ajenti.list \
-    && apt-get update && apt-get upgrade -y \
-    && apt-get install -y nginx mariadb-server mariadb-client redis-server fail2ban nginx \
+    && apt update && apt upgrade -y \
+    && apt install -y nginx mariadb-server mariadb-client redis-server fail2ban nginx \
     && dpkg --configure -a \
     # update
-    && apt-get update && apt-get -y --no-install-recommends upgrade \
-    && apt-get install -y --no-install-recommends libpcre3-dev libssl-dev dpkg-dev libgd-dev \
+    && apt update && apt -y --no-install-recommends upgrade \
+    && apt install -y --no-install-recommends libpcre3-dev libssl-dev dpkg-dev libgd-dev \
     # get the source
-    && apt-get source nginx -y \
+    && apt source nginx -y \
     # apply patch
     && curl -SL $IMAGE_FILTER_URL --output ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}/src/http/modules/ngx_http_image_filter_module.c \
     && sed -i "s/--with-http_ssl_module/--with-http_ssl_module --with-http_image_filter_module --add-module=\/usr\/src\/nginx\/ngx_pagespeed-latest-stable\//g" ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}/debian/rules \
-    # put nginx on hold so it doesn't get updates with apt-get upgrade
+    # put nginx on hold so it doesn't get updates with apt upgrade
     && echo "nginx hold" | dpkg --set-selections \
-    && apt-get install -yq ajenti php-all-dev pkg-php-tools \
-    && apt-get install -yq ajenti-v ajenti-v-nginx ajenti-v-mysql ajenti-v-php-fpm \
+    && apt install -yq ajenti php-all-dev pkg-php-tools \
+    && apt install -yq ajenti-v ajenti-v-nginx ajenti-v-mysql ajenti-v-php-fpm \
     ajenti-v-php7.0-fpm ajenti-v-mail ajenti-v-nodejs ajenti-v-python-gunicorn ajenti-v-ruby-unicorn \
     # install other things
-    && apt-get install -yf mongodb-org php-mongodb couchdb nodejs memcached php-memcached redis-server openvpn \
+    && apt install -yf mongodb-org php-mongodb couchdb nodejs memcached php-memcached redis-server openvpn \
     postgresql postgresql-contrib easy-rsa bind9 bind9utils bind9-doc \
     # relink nodejs
     && ln -sf "$(which nodejs)" /usr/bin/node \
@@ -67,12 +67,12 @@ RUN \
     && echo "\nGOROOT=/usr/local/go\nexport GOROOT\n" >> /root/.profile \
     # pymongo
     && pip install pymongo \
-    && apt-get install -yq php-fpm php-mbstring php-cgi php-cli php-dev php-geoip php-common php-xmlrpc \
+    && apt install -yq php-fpm php-mbstring php-cgi php-cli php-dev php-geoip php-common php-xmlrpc \
     php-dev php-curl php-enchant php-imap php-xsl php-mysql php-mysqlnd php-pspell php-gd \
     php-tidy php-opcache php-json php-bz2 php-pgsql php-mcrypt php-readline php-sybase \
     php-intl php-sqlite3 php-ldap php-xml php-redis php-imagick php-zip \
     # exclude geoip, redis, imagick and of course: mcrypt
-    #    && apt-get install -yq php7.2-fpm php7.2-mbstring php7.2-cgi php7.2-cli php7.2-dev php7.2-common php7.2-xmlrpc \
+    #    && apt install -yq php7.2-fpm php7.2-mbstring php7.2-cgi php7.2-cli php7.2-dev php7.2-common php7.2-xmlrpc \
     #        php7.2-dev php7.2-curl php7.2-enchant php7.2-imap php7.2-xsl php7.2-mysql php7.2-mysqlnd php7.2-pspell php7.2-gd \
     #        php7.2-tidy php7.2-opcache php7.2-json php7.2-bz2 php7.2-pgsql php7.2-readline php7.2-sybase \
     #        php7.2-intl php7.2-sqlite3 php7.2-ldap php7.2-xml php7.2-zip \
@@ -93,8 +93,8 @@ RUN \
     && rm -rf /usr/src/nginx \
     && rm -rf /tmp/.spam* \
     && rm -rf /tmp/* \
-    && apt-get -yf autoremove \
-    && apt-get clean 
+    && apt -yf autoremove \
+    && apt clean 
 
 # add files
 COPY rootfs/. /
@@ -288,8 +288,8 @@ RUN \
     # finish cleaning up
     && rm -rf /backup/.etc \
     && rm -rf /tmp/* \
-    && apt-get -yf autoremove \
-    && apt-get clean 
+    && apt -yf autoremove \
+    && apt clean 
 
 VOLUME ["/backup", "/home", "/ajenti"]
 
