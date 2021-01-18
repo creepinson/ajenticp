@@ -35,16 +35,11 @@ RUN \
     # update
     && apt update && apt -y --no-install-recommends upgrade \
     && apt install -y --no-install-recommends libpcre3-dev libssl-dev dpkg-dev libgd-dev \
-    # get the source
-    && apt source nginx -y \
-    # apply patch
-    && curl -SL $IMAGE_FILTER_URL --output ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}/src/http/modules/ngx_http_image_filter_module.c \
-    && sed -i "s/--with-http_ssl_module/--with-http_ssl_module --with-http_image_filter_module --add-module=\/usr\/src\/nginx\/ngx_pagespeed-latest-stable\//g" ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}/debian/rules \
     # put nginx on hold so it doesn't get updates with apt upgrade
     && echo "nginx hold" | dpkg --set-selections \
     && apt install -yq ajenti php-all-dev pkg-php-tools \
     && apt install -yq ajenti-v ajenti-v-nginx ajenti-v-mysql ajenti-v-php-fpm \
-    ajenti-v-php7.0-fpm ajenti-v-mail ajenti-v-nodejs ajenti-v-python-gunicorn ajenti-v-ruby-unicorn \
+    ajenti-v-php7.4-fpm ajenti-v-mail ajenti-v-nodejs ajenti-v-python-gunicorn ajenti-v-ruby-unicorn \
     # install other things
     && apt install -yf mongodb-org php-mongodb couchdb nodejs memcached php-memcached redis-server openvpn \
     postgresql postgresql-contrib easy-rsa bind9 bind9utils bind9-doc \
