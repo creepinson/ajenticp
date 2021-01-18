@@ -25,7 +25,7 @@ RUN \
     && apt -o Acquire::GzipIndexes=false update \
     # add nginx repo
     && apt update \
-    && apt install nginx wget curl \ 
+    && apt install gnupg2 nginx wget curl \ 
     && wget http://repo.ajenti.org/debian/key -O- | apt-key add - \
     && echo "deb http://repo.ajenti.org/debian main main ubuntu" > /etc/apt/sources.list.d/ajenti.list \
     && apt update && apt upgrade -y \
