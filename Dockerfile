@@ -1,6 +1,4 @@
-FROM niiknow/docker-hostingbase
-
-MAINTAINER theoparisdesigns@gmail.com
+FROM ubuntu
 
 ENV DEBIAN_FRONTEND=noninteractive \
     GOLANG_VERSION=1.13 \
@@ -28,38 +26,19 @@ RUN \
     && usermod -d /var/lib/redis redis \
     && apt-get -o Acquire::GzipIndexes=false update \
     # add nginx repo
-    && curl -s https://nginx.org/keys/nginx_signing.key | apt-key add - \
-    && cp /etc/apt/sources.list /etc/apt/sources.list.bak \
-    && echo "deb http://nginx.org/packages/mainline/ubuntu/ xenial nginx" | tee -a /etc/apt/sources.list \
-    && echo "deb-src http://nginx.org/packages/mainline/ubuntu/ xenial nginx" | tee -a /etc/apt/sources.list \
     && wget http://repo.ajenti.org/debian/key -O- | apt-key add - \
     && echo "deb http://repo.ajenti.org/debian main main ubuntu" > /etc/apt/sources.list.d/ajenti.list \
     && apt-get update && apt-get upgrade -y \
-    && apt-get install -y mariadb-server mariadb-client redis-server fail2ban \
+    && apt-get install -y nginx mariadb-server mariadb-client redis-server fail2ban nginx \
     && dpkg --configure -a \
     # update
     && apt-get update && apt-get -y --no-install-recommends upgrade \
     && apt-get install -y --no-install-recommends libpcre3-dev libssl-dev dpkg-dev libgd-dev \
-    # install nginx with pagespeed first so vesta config can override
-    && mkdir -p ${NGINX_BUILD_DIR} \
-    # Load Pagespeed module, PSOL and nginx
-    && cd ${NGINX_BUILD_DIR} \
-    && curl -SL https://github.com/pagespeed/ngx_pagespeed/archive/latest-stable.zip  -o ${NGINX_BUILD_DIR}/latest-stable.zip \
-    && unzip latest-stable.zip \
-    && cd ${NGINX_PAGESPEED_DIR} \
-    && curl -SL https://dl.google.com/dl/page-speed/psol/${NGINX_PAGESPEED_VERSION}-x64.tar.gz -o ${NGINX_PAGESPEED_VERSION}.tar.gz \
-    && tar -xzf ${NGINX_PAGESPEED_VERSION}.tar.gz \
     # get the source
-    && cd ${NGINX_BUILD_DIR}; apt-get source nginx=${NGINX_VERSION} -y \
-    && mv ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}/src/http/modules/ngx_http_image_filter_module.c ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}/src/http/modules/ngx_http_image_filter_module.bak \
+    && apt-get source nginx -y \
     # apply patch
     && curl -SL $IMAGE_FILTER_URL --output ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}/src/http/modules/ngx_http_image_filter_module.c \
     && sed -i "s/--with-http_ssl_module/--with-http_ssl_module --with-http_image_filter_module --add-module=\/usr\/src\/nginx\/ngx_pagespeed-latest-stable\//g" ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}/debian/rules \
-    # get build dependencies
-    && cd ${NGINX_BUILD_DIR}; apt-get build-dep nginx -y \
-    && cd ${NGINX_BUILD_DIR}/nginx-${NGINX_VERSION}; dpkg-buildpackage -uc -us -b \
-    # install new nginx package
-    && cd ${NGINX_BUILD_DIR}; dpkg -i nginx_${NGINX_VERSION}-1~xenial_amd64.deb \
     # put nginx on hold so it doesn't get updates with apt-get upgrade
     && echo "nginx hold" | dpkg --set-selections \
     && apt-get install -yq ajenti php-all-dev pkg-php-tools \
