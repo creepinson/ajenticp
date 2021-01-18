@@ -10,7 +10,7 @@ RUN \
     cd /tmp \
     # add our user and group first to make sure their IDs get assigned consistently
     && echo "nginx mysql bind clamav ssl-cert dovecot dovenull Debian-exim postgres debian-spamd epmd memcache redis" | xargs -n1 groupadd -K GID_MIN=100 -K GID_MAX=999 ${g} \
-    && echo "nginx nginx mysql mysql bind bind clamav clamav dovecot dovecot dovenull dovenull Debian-exim Debian-exim postgres postgres debian-spamd debian-spamd epmd epmd couchdb couchdb memcache memcache mongodb mongodb redis redis" | xargs -n2 useradd -d /nonexistent -s /bin/false -K UID_MIN=100 -K UID_MAX=999 -g ${g} \
+    && echo "nginx nginx mysql mysql bind bind clamav clamav dovecot dovecot dovenull dovenull Debian-exim Debian-exim postgres postgres debian-spamd debian-spamd epmd epmd memcache memcache mongodb mongodb redis redis" | xargs -n2 useradd -d /nonexistent -s /bin/false -K UID_MIN=100 -K UID_MAX=999 -g ${g} \
     && usermod -d /var/lib/mysql mysql \
     && usermod -d /var/cache/bind bind \
     && usermod -d /var/lib/clamav -a -G Debian-exim clamav && usermod -a -G mail clamav \
@@ -144,10 +144,6 @@ RUN \
     && chmod 0755 /etc/init.d/disable-transparent-hugepages \
     # increase memcache max size from 64m to 256m
     && sed -i -e "s/^\-m 64/\-m 256/g" /etc/memcached.conf \
-    # couchdb stuff
-    && mkdir -p /var/lib/couchdb \
-    && chown -R couchdb:couchdb /usr/bin/couchdb /etc/couchdb /usr/share/couchdb /var/lib/couchdb  \
-    && chmod -R 0770 /usr/bin/couchdb /etc/couchdb /usr/share/couchdb /var/lib/couchdb \
     # secure ssh
     && sed -i -e "s/PermitRootLogin prohibit-password/PermitRootLogin no/g" /etc/ssh/sshd_config \
     # increase postgresql limit to support at least 8gb ram
@@ -259,12 +255,6 @@ RUN \
     && mv /etc/mongod.conf /ajenti-start/etc/mongod.conf \
     && rm -rf /etc/mongod.conf \
     && ln -s /ajenti/etc/mongod.conf /etc/mongod.conf \
-    && mv /etc/couchdb /ajenti-start/etc/couchdb \
-    && rm -rf /etc/couchdb \
-    && ln -s /ajenti/etc/couchdb /etc/couchdb \
-    && mv /var/lib/couchdb /ajenti-start/var/lib/couchdb \
-    && rm -rf /var/lib/couchdb \
-    && ln -s /ajenti/var/lib/couchdb /var/lib/couchdb \
     # pagespeed stuff
     && mkdir -p /var/ngx_pagespeed_cache \
     && chmod 755 /var/ngx_pagespeed_cache \
