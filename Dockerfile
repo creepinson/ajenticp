@@ -30,7 +30,7 @@ RUN \
     && wget http://repo.ajenti.org/debian/key -O- | apt-key add - \
     && echo "deb http://repo.ajenti.org/debian main main ubuntu" > /etc/apt/sources.list.d/ajenti.list \
     && apt update && apt upgrade -y \
-    && apt install -y nginx mariadb-server mariadb-client redis-server fail2ban nginx python-pip python-dev libsasl2-dev python-dev libldap2-dev libssl-dev \
+    && apt install -y nginx mariadb-server mariadb-client redis-server fail2ban nginx python python-dev libsasl2-dev python-dev libldap2-dev libssl-dev \
     && dpkg --configure -a \
     # update
     && apt update && apt -y --no-install-recommends upgrade \
