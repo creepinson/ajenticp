@@ -51,13 +51,8 @@ RUN \
     && pip install pymongo \
     && apt install -yq php-fpm php-mbstring php-cgi php-cli php-dev php-geoip php-common php-xmlrpc \
     php-dev php-curl php-enchant php-imap php-xsl php-mysql php-mysqlnd php-pspell php-gd \
-    php-tidy php-opcache php-json php-bz2 php-pgsql php-mcrypt php-readline php-sybase \
+    php-tidy php-opcache php-json php-bz2 php-pgsql php-readline php-sybase \
     php-intl php-sqlite3 php-ldap php-xml php-redis php-imagick php-zip \
-    # exclude geoip, redis, imagick and of course: mcrypt
-    #    && apt install -yq php7.2-fpm php7.2-mbstring php7.2-cgi php7.2-cli php7.2-dev php7.2-common php7.2-xmlrpc \
-    #        php7.2-dev php7.2-curl php7.2-enchant php7.2-imap php7.2-xsl php7.2-mysql php7.2-mysqlnd php7.2-pspell php7.2-gd \
-    #        php7.2-tidy php7.2-opcache php7.2-json php7.2-bz2 php7.2-pgsql php7.2-readline php7.2-sybase \
-    #        php7.2-intl php7.2-sqlite3 php7.2-ldap php7.2-xml php7.2-zip \
     # patch before adding new files
     && rm -f /var/lib/ajenti/plugins/vh-nginx/ng*.* \
     && rm -f /var/lib/ajenti/plugins/vh-nginx/*.pyc \
