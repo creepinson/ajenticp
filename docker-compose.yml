@@ -1,18 +1,18 @@
 version: "3.3"
 
 services:
-  ajenti:
-    image: niiknow/ajenticp
-    container_name: ajenti
-    cap_add: ['NET_RAW', 'NET_ADMIN']
-    volumes:
-      - "/opt/ajenticp/ajenti:/ajenti"
-      - "/opt/ajenticp/backup:/backup"
-    ports:
-      - "80:80"
-      - "443:443"
-      - "8000:8000"
-      - "8001:8001"
-    labels:
-      - "Ajenti Control Panel"
-    restart: unless-stopped
+    ajenti:
+        build: .
+        container_name: ajenti
+        cap_add: ["NET_RAW", "NET_ADMIN"]
+        volumes:
+            - "/opt/ajenticp/ajenti:/ajenti"
+            - "/opt/ajenticp/backup:/backup"
+        ports:
+            - "80:80"
+            - "443:443"
+            - "8000:8000"
+            - "8001:8001"
+        labels:
+            - "Ajenti Control Panel"
+        restart: unless-stopped
